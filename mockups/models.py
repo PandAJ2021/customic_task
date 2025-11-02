@@ -28,11 +28,16 @@ class Mockup(models.Model):
     font = models.CharField(max_length=50, choices=FONT_CHOICES)
     text = models.CharField(max_length=255)
     text_color = models.CharField(max_length=7, default='#000000')
-    shirt_colors = models.JSONField(default=lambda: ['red', 'blue', 'black', 'white'])
+    shirt_colors = models.JSONField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.text_color} - {self.font} text on {', '.join(self.shirt_colors)} shirt(s)"
+    
+    def save(self, *args, **kwargs):
+        if not self.shirt_colors:
+            self.shirt_colors = list(choice[0] for choice in self.SHIRT_COLOR_CHOICES)
+        return super().save(*args, **kwargs)
 
 
 class Result(models.Model):
