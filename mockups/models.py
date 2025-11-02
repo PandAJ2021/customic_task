@@ -1,3 +1,44 @@
+import uuid
 from django.db import models
+from django.conf import settings
 
-# Create your models here.
+
+class Mockup(models.Model):
+    FONT_CHOICES = [
+        ('courier', 'Courier'),
+        ('great_vibes', 'Great Vibes'),
+        ('lobster', 'Lobster'),
+        ('opensans', 'Open Sans'),
+        ('pacifico', 'Pacifico'),
+        ('playfair', 'Playfair Display'),
+        ('roboto', 'Roboto'),
+        ('times', 'Times New Roman'),
+        ('vermin', 'Vermin Vibes'),
+    ]
+
+    SHIRT_COLOR_CHOICES = [
+        ('red', 'Red'),
+        ('blue', 'Blue'),
+        ('black', 'Black'),
+        ('white', 'White'),
+    ]
+
+    task_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='mockups')
+    font = models.CharField(max_length=50, choices=FONT_CHOICES)
+    text = models.CharField(max_length=255)
+    text_color = models.CharField(max_length=7, default='#000000')
+    shirt_colors = models.JSONField(default=lambda: ['red', 'blue', 'black', 'white'])
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.text_color} - {self.font} text on {', '.join(self.shirt_colors)} shirt(s)"
+
+
+class Result(models.Model):
+    mockup = models.ForeignKey(Mockup, on_delete=models.CASCADE, related_name='results')
+    image_url = models.URLField(max_length=500)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Result for {self.mockup.task_id} - {self.image_url}"
