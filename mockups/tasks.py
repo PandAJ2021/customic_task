@@ -8,8 +8,10 @@ from .utils import get_font_path, get_shirt_image_path
 
 
 @shared_task
-def generate_mockup_images_task(mockup:Mockup):
+def generate_mockup_images_task(mockup_id):
 
+    mockup = Mockup.objects.get(task_id=mockup_id)
+    
     # Convert hex color to RGB tuple
     font_color = tuple(int(mockup.text_color.lstrip('#')[i:i+2], 16) for i in (0, 2, 4))
 
