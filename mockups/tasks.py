@@ -10,7 +10,8 @@ from .utils import get_font_path, get_shirt_image_path
 @shared_task
 def generate_mockup_images_task(mockup_id):
 
-    mockup = Mockup.objects.get(task_id=mockup_id)
+    mockup = Mockup.objects.get(id=mockup_id)
+    results_list = []
     
     # Convert hex color to RGB tuple
     font_color = tuple(int(mockup.text_color.lstrip('#')[i:i+2], 16) for i in (0, 2, 4))
@@ -35,7 +36,16 @@ def generate_mockup_images_task(mockup_id):
         output_path = os.path.join(output_dir, filename)
         image.save(output_path, "PNG")
 
-        Result.objects.create(
+        result_obj = Result.objects.create(
             mockup=mockup,
             image_url=f"mockups/{filename}"
         )
+
+        results_list.append({
+            "image_url": result_obj.image_url,
+            "created_at": result_obj.created_at.isoformat()
+        })
+
+    return {
+        "results": results_list
+    }
