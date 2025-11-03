@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
+from rest_framework import filters
 from celery.result import AsyncResult
 from core.celery import app
 from .models import Result
@@ -64,6 +65,8 @@ class MockupHistoryView(ListAPIView):
     serializer_class = ResultSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = ResultPagination
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['mockup__text', 'mockup__font']
 
     def get_queryset(self):
         user = self.request.user
