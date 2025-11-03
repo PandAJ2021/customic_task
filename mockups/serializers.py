@@ -8,7 +8,7 @@ class MockupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mockup
         fields = '__all__'
-        read_only_fields = ['task_id', 'created_at', 'user']
+        read_only_fields = ['id', 'created_at', 'user']
     
 
     def validate_text_color(self, value):
@@ -45,9 +45,10 @@ class MockupSerializer(serializers.ModelSerializer):
 
 
 class ResultSerializer(serializers.ModelSerializer):
-    mockup_task_id = serializers.UUIDField(source='mockup.task_id', read_only=True)
 
+    mockup = MockupSerializer(read_only=True)
+    
     class Meta:
         model = Result
-        fields = ['mockup_task_id', 'image_url', 'created_at']
-        read_only_fields = ['created_at', 'mockup_task_id']
+        fields = ['image_url', 'created_at', 'mockup']
+        read_only_fields = ['created_at']
