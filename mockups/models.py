@@ -13,7 +13,7 @@ class Mockup(models.Model):
         ('playfair', 'Playfair Display'),
         ('roboto', 'Roboto'),
         ('times', 'Times New Roman'),
-        ('vermin', 'Vermin Vibes'),
+        ('vermin', 'Vermin_Vibes'),
     ]
 
     SHIRT_COLOR_CHOICES = [
@@ -23,7 +23,6 @@ class Mockup(models.Model):
         ('white', 'White'),
     ]
 
-    task_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='mockups')
     font = models.CharField(max_length=50, choices=FONT_CHOICES)
     text = models.CharField(max_length=255)
