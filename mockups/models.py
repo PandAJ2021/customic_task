@@ -17,7 +17,7 @@ class Mockup(models.Model):
     ]
 
     SHIRT_COLOR_CHOICES = [
-        ('red', 'Red'),
+        ('yellow', 'Yellow'),
         ('blue', 'Blue'),
         ('black', 'Black'),
         ('white', 'White'),
