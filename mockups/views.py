@@ -1,12 +1,14 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from celery.result import AsyncResult
 from core.celery import app
-from .models import Mockup
-from .serializers import MockupSerializer
+from .models import Result
+from .serializers import MockupSerializer, ResultSerializer
 from .tasks import generate_mockup_images_task
+from .pagination import ResultPagination
 
 
 class CreateMockupView(APIView):
@@ -56,4 +58,13 @@ class TaskResultView(APIView):
             return Response(response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(response_data, status=status.HTTP_200_OK)
+    
 
+class MockupHistoryView(ListAPIView):
+    serializer_class = ResultSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = ResultPagination
+
+    def get_queryset(self):
+        user = self.request.user
+        return Result.objects.filter(mockup__user = user).select_related('mockup').order_by('-created_at')
